@@ -1,0 +1,58 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("io.spring.gradle:dependency-management-plugin:${springIOVersion}")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+
+//修改项目属性(可选)
+group GROUP
+version VERSION
+
+//应用插件
+apply plugin: 'java'
+
+
+// JVM 版本号要求
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+// java编译的时候缺省状态下会因为中文字符而失败
+[compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
+
+
+// 定义仓库
+repositories {
+    maven{url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    maven{url 'https://mvnrepository.com/'}
+    mavenLocal()
+    mavenCentral()
+}
+apply plugin: 'io.spring.dependency-management'
+dependencyManagement {
+    imports {
+        //spring bom helps us to declare dependencies without specifying version numbers.
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+    }
+}
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    implementation("org.springframework.boot:spring-boot-starter-web")
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-consul-discovery
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-consul-discovery'
+
+
+    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-consul-discovery
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server'
+
+}
